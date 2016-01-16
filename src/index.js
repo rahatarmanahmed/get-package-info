@@ -14,10 +14,15 @@ const getInfo = (props, dir, result) => {
         moduleDirectory: '.'
     })
 
+    .catch((err) => {
+        err.message += `(Properties not found yet: ${props})`;
+        throw err;
+    })
+
     .spread((src, pkg) => {
         const nextProps = [];
 
-        for(const prop of props) {
+        props.forEach((prop) => {
 
             // For props given as array
             // Look for props in that order, and when found
@@ -26,10 +31,10 @@ const getInfo = (props, dir, result) => {
                 let value;
                 prop.some((p) => value = get(pkg, p));
                 if(value !== undefined) {
-                    for(const p of prop) {
+                    prop.forEach((p) => {
                         result.values[p] = value;
                         result.source[p] = { src, pkg };
-                    }
+                    });
                 }
                 else {
                     nextProps.push(prop);
@@ -48,7 +53,7 @@ const getInfo = (props, dir, result) => {
                     nextProps.push(prop);
                 }
             }
-        }
+        });
 
         // Still have props to look for, look at another package.json above this one
         if(nextProps.length) {
