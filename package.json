@@ -1,7 +1,7 @@
 {
   "name": "get-package-info",
   "description": "Gets properties from package.json files in parent directories.",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "license": "MIT",
   "main": "lib/index.js",
   "author": "Rahat Ahmed",
