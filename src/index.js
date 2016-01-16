@@ -14,6 +14,11 @@ const getInfo = (props, dir, result) => {
         moduleDirectory: '.'
     })
 
+    .catch((err) => {
+        err.message += `(Properties not found yet: ${props})`;
+        throw err;
+    })
+
     .spread((src, pkg) => {
         const nextProps = [];
 
