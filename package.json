@@ -23,7 +23,7 @@
     "chai": "^3.4.1",
     "eslint": "^1.10.3",
     "eslint-config-kellyirc": "^3.1.0",
-    "mocha": "^2.3.4",
+    "mocha": "^2.4.2",
     "onchange": "^2.0.0"
   },
   "dependencies": {
