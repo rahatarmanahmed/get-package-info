@@ -5,6 +5,7 @@
   "license": "MIT",
   "main": "lib/index.js",
   "author": "Rahat Ahmed",
+  "repository": "https://github.com/rahatarmanahmed/get-package-info",
   "scripts": {
     "lint": "eslint src/ test/",
     "test": "mocha --compilers js:babel-register,es6:babel-register,es6.js:babel-register test/",
