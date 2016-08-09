@@ -28,12 +28,16 @@ const getInfo = (props, dir, result) => {
             // Look for props in that order, and when found
             // save value under all given props
             if(Array.isArray(prop)) {
-                let value;
-                prop.some((p) => value = get(pkg, p));
+                let value, sourceProp;
+                prop.some((p) => {
+                    sourceProp = p;
+                    value = get(pkg, p);
+                    return value;
+                });
                 if(value !== undefined) {
                     prop.forEach((p) => {
                         result.values[p] = value;
-                        result.source[p] = { src, pkg };
+                        result.source[p] = { src, pkg, prop: sourceProp };
                     });
                 }
                 else {
@@ -47,7 +51,7 @@ const getInfo = (props, dir, result) => {
 
                 if(value !== undefined) {
                     result.values[prop] = value;
-                    result.source[prop] = { src, pkg };
+                    result.source[prop] = { src, pkg, prop };
                 }
                 else {
                     nextProps.push(prop);
