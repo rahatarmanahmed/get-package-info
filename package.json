@@ -25,7 +25,7 @@
     "eslint": "^2.0.0",
     "eslint-config-kellyirc": "^3.1.0",
     "mocha": "^3.0.0",
-    "onchange": "^2.0.0"
+    "onchange": "^3.0.0"
   },
   "dependencies": {
     "bluebird": "^3.1.1",
