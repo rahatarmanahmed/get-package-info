@@ -4,10 +4,15 @@ const path = require('path');
 const resolve = Promise.promisify(require('resolve'), {
     multiArgs: true
 });
+const debug = require('debug')('get-package-info');
 
 const getInfo = (props, dir, result) => {
     if(!Array.isArray(props)) return Promise.reject(new Error('First argument must be array of properties to retrieve.'));
     if(!props.length) return Promise.resolve(result);
+
+    debug('Getting props: ', props);
+    debug('Looking up starting from directory: ', dir);
+    debug('Result so far:', result);
 
     return resolve('package.json', {
         basedir: dir,
@@ -20,6 +25,7 @@ const getInfo = (props, dir, result) => {
     })
 
     .spread((src, pkg) => {
+        debug('Checking props in package.json found at:', src);
         const nextProps = [];
 
         props.forEach((prop) => {
@@ -35,12 +41,14 @@ const getInfo = (props, dir, result) => {
                     return value;
                 });
                 if(value !== undefined) {
+                    debug('Found prop:', prop);
                     prop.forEach((p) => {
                         result.values[p] = value;
                         result.source[p] = { src, pkg, prop: sourceProp };
                     });
                 }
                 else {
+                    debug('Couldn\'t find prop:', prop);
                     nextProps.push(prop);
                 }
             }
@@ -50,10 +58,12 @@ const getInfo = (props, dir, result) => {
                 const value = get(pkg, prop);
 
                 if(value !== undefined) {
+                    debug('Found prop:', prop);
                     result.values[prop] = value;
                     result.source[prop] = { src, pkg, prop };
                 }
                 else {
+                    debug('Couldn\'t find prop:', prop);
                     nextProps.push(prop);
                 }
             }
@@ -61,9 +71,11 @@ const getInfo = (props, dir, result) => {
 
         // Still have props to look for, look at another package.json above this one
         if(nextProps.length) {
+            debug('Not all props satisfied, looking for parent package.json');
             return getInfo(nextProps, path.join(path.dirname(src), '..'), result);
         }
 
+        debug('Found all props!');
         return result;
     });
 };
