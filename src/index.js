@@ -1,9 +1,7 @@
 const Promise = require('bluebird');
 const get = require('lodash.get');
+const readPkgUp = require('read-pkg-up');
 const path = require('path');
-const resolve = Promise.promisify(require('resolve'), {
-    multiArgs: true
-});
 const debug = require('debug')('get-package-info');
 
 const getInfo = (props, dir, result) => {
@@ -14,17 +12,20 @@ const getInfo = (props, dir, result) => {
     debug('Looking up starting from directory: ', dir);
     debug('Result so far:', result);
 
-    return resolve('package.json', {
-        basedir: dir,
-        moduleDirectory: '.'
-    })
+    return Promise.resolve(readPkgUp({ cwd: dir, normalize: false }))
 
-    .catch((err) => {
-        err.message += `(Properties not found yet: ${props})`;
-        throw err;
-    })
+    .then(({ path: src, pkg }) => {
+        if (!src) {
+            debug('Couldn\'t find any more package.json files');
+            const err = new Error(
+                'Unable to find all properties in parent package.json files. Missing props: '
+                + props.map((prop) => JSON.stringify(prop)).join(', ')
+            );
+            err.missingProps = props;
+            err.result = result;
+            throw err;
+        }
 
-    .spread((src, pkg) => {
         debug('Checking props in package.json found at:', src);
         const nextProps = [];
 

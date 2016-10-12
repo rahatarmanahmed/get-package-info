@@ -59,6 +59,8 @@ Possible output, depending on the directory structure and package.json contents:
 */
 ```
 
-## I'm getting `Error: Cannot find module 'package.json' from '/path/to/dir'`
+## Handling Errors
 
-This is an error from [`resolve`](https://github.com/substack/node-resolve) that means it was not able to find all the requested props. It would be nice to have a more descriptive error but there's no way to do that until [this PR](https://github.com/substack/node-resolve/pull/81) is merged.
+If all the properties cannot be found in parent package.json files, then `getPackageInfo()` will reject it's promise (or callback with err argument) with an Error. `err.missingProps` will have an array of the properties that it could not find, and `err.result` will contain all the props that were found.
+
+If any other error occurs(like I/O or runtime errors), `getPackageInfo()` will reject with that error itself.
