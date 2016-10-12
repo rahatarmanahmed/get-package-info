@@ -14,65 +14,68 @@ const getInfo = (props, dir, result) => {
 
   return Promise.resolve(readPkgUp({ cwd: dir, normalize: false }))
 
-    .then(({ path: src, pkg }) => {
-      if (!src) {
-        debug('Couldn\'t find any more package.json files')
-        const err = new Error(
-                'Unable to find all properties in parent package.json files. Missing props: ' +
-                props.map((prop) => JSON.stringify(prop)).join(', ')
-            )
-        err.missingProps = props
-        err.result = result
-        throw err
-      }
+  .then(({ path: src, pkg }) => {
+    if (!src) {
+      debug('Couldn\'t find any more package.json files')
+      const err = new Error(
+        'Unable to find all properties in parent package.json files. Missing props: ' +
+        props.map((prop) => JSON.stringify(prop)).join(', ')
+      )
+      err.missingProps = props
+      err.result = result
+      throw err
+    }
 
-      debug('Checking props in package.json found at:', src)
-      const nextProps = []
+    debug('Checking props in package.json found at:', src)
+    const nextProps = []
 
-      props.forEach((prop) => {
-            // For props given as array
-            // Look for props in that order, and when found
-            // save value under all given props
-        if (Array.isArray(prop)) {
-          let value, sourceProp
-          prop.some((p) => {
-            sourceProp = p
-            value = get(pkg, p)
-            return value
+    props.forEach((prop) => {
+      // For props given as array
+      // Look for props in that order, and when found
+      // save value under all given props
+      if (Array.isArray(prop)) {
+        let value, sourceProp
+
+        prop.some((p) => {
+          sourceProp = p
+          value = get(pkg, p)
+          return value
+        })
+
+        if (value !== undefined) {
+          debug('Found prop:', prop)
+          prop.forEach((p) => {
+            result.values[p] = value
+            result.source[p] = { src, pkg, prop: sourceProp }
           })
-          if (value !== undefined) {
-            debug('Found prop:', prop)
-            prop.forEach((p) => {
-              result.values[p] = value
-              result.source[p] = { src, pkg, prop: sourceProp }
-            })
-          } else {
-            debug('Couldn\'t find prop:', prop)
-            nextProps.push(prop)
-          }
-        } else { // For regular string props, just look normally
-          const value = get(pkg, prop)
-
-          if (value !== undefined) {
-            debug('Found prop:', prop)
-            result.values[prop] = value
-            result.source[prop] = { src, pkg, prop }
-          } else {
-            debug('Couldn\'t find prop:', prop)
-            nextProps.push(prop)
-          }
+        } else {
+          debug('Couldn\'t find prop:', prop)
+          nextProps.push(prop)
         }
-      })
+      } else {
+        // For regular string props, just look normally
+        const value = get(pkg, prop)
 
-        // Still have props to look for, look at another package.json above this one
-      if (nextProps.length) {
-        debug('Not all props satisfied, looking for parent package.json')
-        return getInfo(nextProps, path.join(path.dirname(src), '..'), result)
+        if (value !== undefined) {
+          debug('Found prop:', prop)
+          result.values[prop] = value
+          result.source[prop] = { src, pkg, prop }
+        } else {
+          debug('Couldn\'t find prop:', prop)
+          nextProps.push(prop)
+        }
       }
-
-      debug('Found all props!')
-      return result
     })
+
+      // Still have props to look for, look at another package.json above this one
+    if (nextProps.length) {
+      debug('Not all props satisfied, looking for parent package.json')
+      return getInfo(nextProps, path.join(path.dirname(src), '..'), result)
+    }
+
+    debug('Found all props!')
+    return result
+  })
 }
 
 module.exports = (props, dir, cb) => getInfo(props, dir, { values: {}, source: {} }).nodeify(cb)
