@@ -92,4 +92,26 @@ describe('get-package-info', () => {
             }
         );
     });
+
+    it('should resolve with error message when unable to find all props', () => {
+        return getPackageInfo(
+            [
+                ['productName', 'name'],
+                'nonexistent',
+                'version',
+                ['this', 'doesntexist']
+            ]
+        )
+        .then(() => {
+            throw new Error('Should not resolve when props are missing');
+        })
+        .catch((err) => {
+            expect(err.missingProps).to.deep.equal(['nonexistent', ['this', 'doesntexist']]);
+            return Promise.all(
+                Object.keys(err.result.source).map(
+                    (prop) => testSource(prop, err.result.source[prop])
+                )
+            );
+        });
+    });
 });
