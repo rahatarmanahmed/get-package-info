@@ -69,7 +69,7 @@ describe('get-package-info', () => {
       ],
       path.join(__dirname, 'node_modules/we/need/to/go/deeper/'),
       (err, result) => {
-        expect(err).to.be.null
+        expect(err).to.equal(null)
         expect(result.values).to.deep.equal({
           productName: 'Deeper',
           name: 'Deeper',
