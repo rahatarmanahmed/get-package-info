@@ -1,4 +1,6 @@
 # get-package-info [![Build Status](https://travis-ci.org/rahatarmanahmed/get-package-info.svg?branch=master)](https://travis-ci.org/rahatarmanahmed/get-package-info)
+
+[![Greenkeeper badge](https://badges.greenkeeper.io/rahatarmanahmed/get-package-info.svg)](https://greenkeeper.io/)
 Gets properties from package.json files in parent directories.
 
 ## Installing
