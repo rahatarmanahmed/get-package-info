@@ -27,7 +27,7 @@
   },
   "dependencies": {
     "bluebird": "^3.1.1",
-    "debug": "^2.2.0",
+    "debug": "^3.1.0",
     "lodash.get": "^4.0.0",
     "read-pkg-up": "^2.0.0"
   },
