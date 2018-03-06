@@ -21,7 +21,7 @@
     "babel-preset-es2015": "^6.3.13",
     "babel-register": "^6.4.3",
     "chai": "^4.0.1",
-    "mocha": "^3.0.0",
+    "mocha": "^5.0.2",
     "onchange": "^3.0.0",
     "standard": "^10.0.0"
   },
