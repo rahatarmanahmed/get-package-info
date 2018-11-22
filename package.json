@@ -22,7 +22,7 @@
     "babel-register": "^6.4.3",
     "chai": "^4.0.1",
     "mocha": "^3.0.0",
-    "onchange": "^3.0.0",
+    "onchange": "^5.1.1",
     "standard": "^10.0.0"
   },
   "dependencies": {
