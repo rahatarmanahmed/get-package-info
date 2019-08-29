@@ -23,7 +23,7 @@
     "chai": "^4.0.1",
     "mocha": "^3.0.0",
     "onchange": "^3.0.0",
-    "standard": "^10.0.0"
+    "standard": "^14.1.0"
   },
   "dependencies": {
     "bluebird": "^3.1.1",
